@@ -32,7 +32,7 @@ public class HelloControllerTest {
     public void Hello_리턴된다() throws Exception {
         // given
         String expectedContent = "hello";
-        String URL = MYURL + port + "/";
+        String URL = MYURL + port + "/hello";
 
         // when
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(URL, String.class);

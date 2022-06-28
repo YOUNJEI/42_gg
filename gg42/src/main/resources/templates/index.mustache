@@ -1,0 +1,18 @@
+{{>layout/header}}
+<h1>42.GG Ver.1</h1>
+<div class="col-md-12">
+    <!-- 로그인 기능 영역 -->
+    <div class="row">
+        <div class="col-md-6">
+            {{^userName}}
+                <a href="/login" role="button" class="btn btn-primary">로그인</a>
+            {{/userName}}
+            {{#userName}}
+                Logged in as: <span id="user">{{userName}}</span>
+                <a href="/logout" class="btn btn-info active" role="button">로그아웃</a>
+            {{/userName}}
+        </div>
+    </div>
+</div>
+<br>
+{{>layout/footer}}
