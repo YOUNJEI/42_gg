@@ -1,5 +1,7 @@
 package com.example.gg42.web;
 
+import com.example.gg42.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -12,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
+@RequiredArgsConstructor
 @Controller
 public class MemberController {
+
+    private final MemberService memberService;
 
     @Value("${42APIUID}")
     private String apiUid;
@@ -35,30 +40,12 @@ public class MemberController {
     }
 
     @GetMapping("/api/v1/login")
-    @ResponseBody
-    public String GetAccessToken(@RequestParam("code") String code) {
-        String url = "https://api.intra.42.fr/oauth/token";
-
-        // POST 보내기 위한 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-        // POST 보내기 위한 툴
-        RestTemplate restTemplate = new RestTemplate();
-
-        // POST BODY 설정
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("grant_type", "authorization_code");
-        map.add("client_id", apiUid);
-        map.add("client_secret", apiSecret);
-        map.add("code", code);
-        map.add("redirect_uri", apiRedirectUri);
-
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
-        String response = restTemplate.postForObject(url, entity, String.class);
-
-        return response;
+    public String GetAccessToken(@RequestParam(value = "code", required = false) String code,
+                                 @RequestParam(value = "error", required = false) String error) throws Exception {
+        if (code == null) {
+            throw new IllegalStateException("승인이 필요합니다.");
+        }
+        memberService.GetAccessToken(apiUid, apiSecret, code, apiRedirectUri);
+        return "redirect:" + "/";
     }
-
-
 }
