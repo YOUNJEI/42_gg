@@ -7,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,11 +42,16 @@ public class MemberController {
 
     @GetMapping("/api/v1/login")
     public String GetAccessToken(@RequestParam(value = "code", required = false) String code,
-                                 @RequestParam(value = "error", required = false) String error) throws Exception {
+                                 @RequestParam(value = "error", required = false) String error,
+                                 Model model) throws Exception {
         if (code == null) {
             throw new IllegalStateException("승인이 필요합니다.");
         }
-        memberService.GetAccessToken(apiUid, apiSecret, code, apiRedirectUri);
-        return "redirect:" + "/";
+        String userName = memberService.GetAccessToken(apiUid, apiSecret, code, apiRedirectUri);
+        if (userName != null) {
+            model.addAttribute("userName", userName);
+        }
+        return "index";
+        //return "redirect:" + "/";
     }
 }
