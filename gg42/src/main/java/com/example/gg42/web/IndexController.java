@@ -22,14 +22,11 @@ public class IndexController {
 
     @GetMapping("/login")
     public String login() {
-        //RestTemplate restTemplate = new RestTemplate();
-        //String response = "";
         String requestURL = "https://api.intra.42.fr/oauth/authorize?"
                 + "client_id=" + apiUid + "&"
                 + "redirect_uri=" + apiRedirectUri + "&"
                 + "response_type=" + "code";
 
-        //response = restTemplate.getForObject(requestURL, String.class);
         return "redirect:" + requestURL;
     }
 }
