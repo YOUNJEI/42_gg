@@ -1,15 +1,15 @@
 package com.example.gg42.service;
 
 import com.example.gg42.domain.member.MemberRepository;
+import com.example.gg42.web.dto.MemberSaveDto;
+import com.example.gg42.web.dto.OAuthTokenResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import sun.security.util.Debug;
 
 @RequiredArgsConstructor
 @Service
@@ -36,29 +36,26 @@ public class MemberService {
 
         // POST 요청
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
-        //String response = restTemplate.postForObject(url, entity, String.class);
-        ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+        ResponseEntity<OAuthTokenResponseDto> response = restTemplate.exchange(url, HttpMethod.POST, entity, OAuthTokenResponseDto.class);
 
-        // JSON parsing
-        try {
-            JSONObject jsonObject = (JSONObject) new JSONParser().parse(response.getBody().toString());
-            CallApiMe(jsonObject.get("access_token").toString());
-            return jsonObject.get("access_token").toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        MemberSaveDto memberSaveDto = CallApiMe(response.getBody().getAccess_token());
+        return memberSaveDto.getLogin();
     }
 
-    private JSONObject CallApiMe(String accessToken) {
+    private MemberSaveDto CallApiMe(String accessToken) {
+        // API URL
         String url = "https://api.intra.42.fr/v2/me";
+
+        // 헤더에 액세스 토큰 삽입
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(headers);
 
+        // GET request
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        ResponseEntity<MemberSaveDto> response = restTemplate.exchange(url, HttpMethod.GET, entity, MemberSaveDto.class);
 
-
+        memberRepository.save(response.getBody().toEntity());
+        return response.getBody();
     }
 }

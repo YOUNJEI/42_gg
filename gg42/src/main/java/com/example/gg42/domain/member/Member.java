@@ -33,7 +33,8 @@ public class Member extends BaseTimeEntity {
      */
 
     @Builder
-    public Member(String name) {
+    public Member(String name, String picture) {
         this.name = name;
+        this.picture = picture;
     }
 }
