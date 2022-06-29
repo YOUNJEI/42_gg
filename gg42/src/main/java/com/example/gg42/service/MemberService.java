@@ -4,7 +4,6 @@ import com.example.gg42.domain.member.MemberRepository;
 import com.example.gg42.web.dto.MemberSaveDto;
 import com.example.gg42.web.dto.OAuthTokenResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    public String GetAccessToken(String apiUid, String apiSecret, String code, String apiRedirectUri) {
+    public String MemberLogin(String apiUid, String apiSecret, String code, String apiRedirectUri) {
         String url = "https://api.intra.42.fr/oauth/token";
 
         // POST 보내기 위한 헤더 설정
@@ -36,10 +35,14 @@ public class MemberService {
 
         // POST 요청
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
-        ResponseEntity<OAuthTokenResponseDto> response = restTemplate.exchange(url, HttpMethod.POST, entity, OAuthTokenResponseDto.class);
-
-        MemberSaveDto memberSaveDto = CallApiMe(response.getBody().getAccess_token());
-        return memberSaveDto.getLogin();
+        try {
+            ResponseEntity<OAuthTokenResponseDto> response = restTemplate.exchange(url, HttpMethod.POST, entity, OAuthTokenResponseDto.class);
+            MemberSaveDto memberSaveDto = CallApiMe(response.getBody().getAccess_token());
+            return memberSaveDto.getLogin();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private MemberSaveDto CallApiMe(String accessToken) {

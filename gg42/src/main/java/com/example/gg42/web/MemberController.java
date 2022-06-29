@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @RequiredArgsConstructor
 @Controller
@@ -42,16 +46,20 @@ public class MemberController {
 
     @GetMapping("/api/v1/login")
     public String GetAccessToken(@RequestParam(value = "code", required = false) String code,
-                                 @RequestParam(value = "error", required = false) String error,
-                                 Model model) throws Exception {
+                                 HttpServletRequest request, RedirectAttributes rttr) {
         if (code == null) {
-            throw new IllegalStateException("승인이 필요합니다.");
+            rttr.addFlashAttribute("msg", "권한 승인이 필요합니다!");
         }
-        String userName = memberService.GetAccessToken(apiUid, apiSecret, code, apiRedirectUri);
-        if (userName != null) {
-            model.addAttribute("userName", userName);
+        else {
+            String userName = memberService.MemberLogin(apiUid, apiSecret, code, apiRedirectUri);
+            if (userName == null) {
+                rttr.addFlashAttribute("msg", "로그인 오류");
+            }
+            else {
+                HttpSession session = request.getSession();
+                session.setAttribute("userName", userName);
+            }
         }
-        return "index";
-        //return "redirect:" + "/";
+        return "redirect:" + "/";
     }
 }

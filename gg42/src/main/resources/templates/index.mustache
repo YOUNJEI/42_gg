@@ -9,6 +9,9 @@
                 <a href="/api/v1/logout" class="btn btn-info active" role="button">로그아웃</a>
             {{/userName}}
             {{^userName}}
+                {{#msg}}
+                    msg: <span>{{msg}}</span>
+                {{/msg}}
                 <a href="/login" role="button" class="btn btn-primary">로그인</a>
             {{/userName}}
         </div>
