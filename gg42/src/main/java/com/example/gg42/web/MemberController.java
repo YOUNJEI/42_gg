@@ -3,17 +3,9 @@ package com.example.gg42.web;
 import com.example.gg42.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +37,7 @@ public class MemberController {
     }
 
     @GetMapping("/api/v1/login")
-    public String GetAccessToken(@RequestParam(value = "code", required = false) String code,
+    public String Login(@RequestParam(value = "code", required = false) String code,
                                  HttpServletRequest request, RedirectAttributes rttr) {
         if (code == null) {
             rttr.addFlashAttribute("msg", "권한 승인이 필요합니다!");
@@ -60,6 +52,15 @@ public class MemberController {
                 session.setAttribute("userName", userName);
             }
         }
+        return "redirect:" + "/";
+    }
+
+    @GetMapping("/api/v1/logout")
+    public String Logout(HttpSession session) {
+
+        // 세션 삭제
+        session.invalidate();
+
         return "redirect:" + "/";
     }
 }
