@@ -9,6 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 
 @RequiredArgsConstructor
 @Service
@@ -16,7 +23,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public String MemberLogin(String apiUid, String apiSecret, String code, String apiRedirectUri) {
-        String url = "https://api.intra.42.fr/oauth/token";
+        final String url = "https://api.intra.42.fr/oauth/token";
 
         // POST 보내기 위한 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -37,7 +44,9 @@ public class MemberService {
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
         try {
             ResponseEntity<OAuthTokenResponseDto> response = restTemplate.exchange(url, HttpMethod.POST, entity, OAuthTokenResponseDto.class);
+            SetCookie(response.getBody().getAccess_token(), (int)response.getBody().getExpires_in());
             MemberSaveDto memberSaveDto = CallApiMe(response.getBody().getAccess_token());
+
             return memberSaveDto.getLogin();
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,12 +56,12 @@ public class MemberService {
 
     private MemberSaveDto CallApiMe(String accessToken) {
         // API URL
-        String url = "https://api.intra.42.fr/v2/me";
+        final String url = "https://api.intra.42.fr/v2/me";
 
         // 헤더에 액세스 토큰 삽입
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(headers);
+        HttpEntity entity = new HttpEntity<>(headers);
 
         // GET request
         RestTemplate restTemplate = new RestTemplate();
@@ -60,5 +69,19 @@ public class MemberService {
 
         memberRepository.save(response.getBody().toEntity());
         return response.getBody();
+    }
+
+    private void SetCookie(String accessToken, int expires) {
+        RequestAttributes servletContainer = RequestContextHolder.getRequestAttributes();
+        HttpServletResponse httpServletResponse = ((ServletRequestAttributes)servletContainer).getResponse();
+
+        try {
+            Cookie cookie = new Cookie("Authorization",
+                    URLEncoder.encode("Bearer " + accessToken, "UTF-8"));
+            cookie.setMaxAge(expires);
+            httpServletResponse.addCookie(cookie);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -38,7 +38,7 @@ public class MemberController {
 
     @GetMapping("/api/v1/login")
     public String Login(@RequestParam(value = "code", required = false) String code,
-                                 HttpServletRequest request, RedirectAttributes rttr) {
+                            HttpServletRequest request, RedirectAttributes rttr) {
         if (code == null) {
             rttr.addFlashAttribute("msg", "권한 승인이 필요합니다!");
         }

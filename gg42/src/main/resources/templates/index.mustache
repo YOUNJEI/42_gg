@@ -7,6 +7,7 @@
             {{#userName}}
                 Logged in as: <span id="user">{{userName}}</span>
                 <a href="/api/v1/logout" class="btn btn-info active" role="button">로그아웃</a>
+                <a href="/api/v1/me" role="button" class="btn btn-primary">CALL API "ME"</a>
             {{/userName}}
             {{^userName}}
                 {{#msg}}
