@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.net.URLDecoder;
@@ -17,9 +16,9 @@ public class Api42Controller {
 
     @ResponseBody
     @GetMapping("/api/v1/me")
-    public String RequestApiMe(@CookieValue(value = "Authorization", required = false) String accessToken) {
+    public String ApiMe(@CookieValue(value = "Authorization", required = false) String accessToken) {
         try {
-            return api42Service.RequestApiMe(URLDecoder.decode(accessToken, "UTF-8"));
+            return api42Service.ApiMe(URLDecoder.decode(accessToken, "UTF-8"));
         } catch (Exception e) {
             e.printStackTrace();
             return null;

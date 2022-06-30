@@ -12,5 +12,4 @@ public class OAuthTokenResponseDto {
     private long expires_in;
     private String refresh_token;
     private String scope;
-
 }

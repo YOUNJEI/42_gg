@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class MemberSaveDto {
+public class ApiMeResponseDto {
     private String login;
     private String image_url;
 
     @Builder
-    public MemberSaveDto(String login, String image_url) {
+    public ApiMeResponseDto(String login, String image_url) {
         this.login = login;
         this.image_url = image_url;
     }
