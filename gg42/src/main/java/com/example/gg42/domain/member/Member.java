@@ -15,22 +15,12 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /*
-    @Column
-    private LocalDateTime deletedDate;
-     */
-
     @Column(nullable = false)
     private String name;
 
     @Column
     // TODO: 이미지 처리 방식 (URL, or anything else)
     private String picture;
-
-    /*
-    @Column(nullable = false)
-    private boolean blackhole;
-     */
 
     @Builder
     public Member(String name, String picture) {
