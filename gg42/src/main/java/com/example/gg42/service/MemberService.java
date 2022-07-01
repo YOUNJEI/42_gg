@@ -1,12 +1,15 @@
 package com.example.gg42.service;
 
+import com.example.gg42.domain.member.Member;
 import com.example.gg42.domain.member.MemberRepository;
 import com.example.gg42.web.dto.MemberLoginRequestDto;
 import com.example.gg42.web.dto.ApiMeResponseDto;
 import com.example.gg42.web.dto.OAuthTokenResponseDto;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 public class MemberService {
     private final MemberRepository memberRepository;
 
+    @Transactional
     public MemberLoginRequestDto MemberLogin(String apiUid, String apiSecret, String code, String apiRedirectUri) {
         final String url = "https://api.intra.42.fr/oauth/token";
 
@@ -65,7 +69,12 @@ public class MemberService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ApiMeResponseDto> response = restTemplate.exchange(url, HttpMethod.GET, entity, ApiMeResponseDto.class);
 
-        memberRepository.save(response.getBody().toEntity());
+        Member member = memberRepository.findOneByName(response.getBody().getLogin());
+        if (member != null) {
+            member.Update(response.getBody().getImage_url());
+        } else {
+            memberRepository.save(response.getBody().toEntity());
+        }
         return response.getBody();
     }
 }

@@ -15,7 +15,7 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column
@@ -25,6 +25,10 @@ public class Member extends BaseTimeEntity {
     @Builder
     public Member(String name, String picture) {
         this.name = name;
+        this.picture = picture;
+    }
+
+    public void Update(String picture) {
         this.picture = picture;
     }
 }
