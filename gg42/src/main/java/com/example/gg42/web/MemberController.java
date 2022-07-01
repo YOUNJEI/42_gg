@@ -59,7 +59,8 @@ public class MemberController {
             else {
                 HttpSession session = request.getSession();
                 session.setAttribute("refreshToken", response.getRefreshToken());
-                SetCookie(response.getUserName(), response.getAccessToken(), response.getExpires_in());
+                SetCookie("Authorization", "Bearer " + response.getAccessToken());
+                SetCookie("userName", response.getUserName());
             }
         }
         return "redirect:" + "/";
@@ -75,21 +76,15 @@ public class MemberController {
         return "redirect:" + "/";
     }
 
-    private void SetCookie(String userName, String accessToken, Long expires) {
+    private void SetCookie(String key, String value) {
         RequestAttributes servletContainer = RequestContextHolder.getRequestAttributes();
         HttpServletResponse httpServletResponse = ((ServletRequestAttributes)servletContainer).getResponse();
 
         try {
-            Cookie cookie = new Cookie("Authorization",
-                    URLEncoder.encode("Bearer " + accessToken, "UTF-8"));
-            cookie.setMaxAge(expires.intValue());
+            Cookie cookie = new Cookie(key,
+                    URLEncoder.encode(value, "UTF-8"));
             cookie.setPath("/");
             httpServletResponse.addCookie(cookie);
-
-            Cookie cookie2 = new Cookie("userName", userName);
-            cookie2.setMaxAge(expires.intValue());
-            cookie2.setPath("/");
-            httpServletResponse.addCookie(cookie2);
         } catch (Exception e) {
             e.printStackTrace();
         }
