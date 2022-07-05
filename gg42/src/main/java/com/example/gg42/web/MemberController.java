@@ -1,12 +1,9 @@
 package com.example.gg42.web;
 
-import com.example.gg42.domain.member.Member;
 import com.example.gg42.service.MemberService;
 import com.example.gg42.web.dto.MemberLoginRequestDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestAttributes;
@@ -26,22 +23,12 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @Value("${42APIUID}")
-    private String apiUid;
-
-    @Value("${42APISECRET}")
-    private String apiSecret;
-
-    @Value("${42APIREDIRECTURI}")
-    private String apiRedirectUri;
-
     @GetMapping("/login")
     public String GetAuthCode() {
         String requestURL = "https://api.intra.42.fr/oauth/authorize?"
-                + "client_id=" + apiUid + "&"
-                + "redirect_uri=" + apiRedirectUri + "&"
+                + "client_id=" + Config.getApiUid() + "&"
+                + "redirect_uri=" + Config.getApiRedirectUri() + "&"
                 + "response_type=" + "code";
-
         return "redirect:" + requestURL;
     }
 
@@ -52,7 +39,7 @@ public class MemberController {
             rttr.addFlashAttribute("msg", "권한 승인이 필요합니다!");
         }
         else {
-            MemberLoginRequestDto response = memberService.MemberLogin(apiUid, apiSecret, code, apiRedirectUri);
+            MemberLoginRequestDto response = memberService.MemberLogin(Config.getApiUid(), Config.getApiSecret(), code, Config.getApiRedirectUri());
             if (response == null) {
                 rttr.addFlashAttribute("msg", "로그인 오류");
             }
@@ -76,7 +63,7 @@ public class MemberController {
         return "redirect:" + "/";
     }
 
-    private void SetCookie(String key, String value) {
+    private static void SetCookie(String key, String value) {
         RequestAttributes servletContainer = RequestContextHolder.getRequestAttributes();
         HttpServletResponse httpServletResponse = ((ServletRequestAttributes)servletContainer).getResponse();
 
