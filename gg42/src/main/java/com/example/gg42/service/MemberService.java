@@ -4,13 +4,13 @@ import com.example.gg42.domain.member.Member;
 import com.example.gg42.domain.member.MemberRepository;
 import com.example.gg42.web.dto.MemberLoginRequestDto;
 import com.example.gg42.web.dto.ApiMeResponseDto;
+import com.example.gg42.web.dto.OAuthTokenRequestDto;
 import com.example.gg42.web.dto.OAuthTokenResponseDto;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,13 +31,13 @@ public class MemberService {
         RestTemplate restTemplate = new RestTemplate();
 
         // POST BODY 설정
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("grant_type", "authorization_code");
-        map.add("client_id", apiUid);
-        map.add("client_secret", apiSecret);
-        map.add("code", code);
-        map.add("redirect_uri", apiRedirectUri);
-
+        MultiValueMap<String, String> map = OAuthTokenRequestDto.builder()
+                                            .grant_type("authorization_code")
+                                            .client_id(apiUid)
+                                            .client_secret(apiSecret)
+                                            .code(code)
+                                            .redirect_uri(apiRedirectUri)
+                                            .build().toEntity();
         // POST 요청
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
         try {

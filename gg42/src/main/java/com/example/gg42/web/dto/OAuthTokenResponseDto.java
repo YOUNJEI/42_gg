@@ -1,6 +1,5 @@
 package com.example.gg42.web.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

@@ -53,7 +53,7 @@ public class MemberController {
         }
         else {
             MemberLoginRequestDto response = memberService.MemberLogin(apiUid, apiSecret, code, apiRedirectUri);
-            if (response.getUserName() == null) {
+            if (response == null) {
                 rttr.addFlashAttribute("msg", "로그인 오류");
             }
             else {
