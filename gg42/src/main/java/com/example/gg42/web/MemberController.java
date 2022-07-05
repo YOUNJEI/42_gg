@@ -63,7 +63,7 @@ public class MemberController {
         return "redirect:" + "/";
     }
 
-    private static void SetCookie(String key, String value) {
+    public static void SetCookie(String key, String value) {
         RequestAttributes servletContainer = RequestContextHolder.getRequestAttributes();
         HttpServletResponse httpServletResponse = ((ServletRequestAttributes)servletContainer).getResponse();
 
