@@ -1,5 +1,6 @@
 package com.example.gg42.web;
 
+import com.example.gg42.config.security.Config;
 import com.example.gg42.service.MemberService;
 import com.example.gg42.web.dto.MemberLoginRequestDto;
 import lombok.RequiredArgsConstructor;

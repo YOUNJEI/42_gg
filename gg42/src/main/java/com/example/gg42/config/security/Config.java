@@ -1,4 +1,4 @@
-package com.example.gg42.web;
+package com.example.gg42.config.security;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

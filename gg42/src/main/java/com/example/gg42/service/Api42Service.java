@@ -2,7 +2,7 @@ package com.example.gg42.service;
 
 import com.example.gg42.service.exception.CustomException;
 import com.example.gg42.service.exception.ErrorMessage;
-import com.example.gg42.web.Config;
+import com.example.gg42.config.security.Config;
 import com.example.gg42.web.MemberController;
 import com.example.gg42.web.dto.OAuthTokenRequestDto;
 import com.example.gg42.web.dto.OAuthTokenResponseDto;
@@ -16,7 +16,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @Service
