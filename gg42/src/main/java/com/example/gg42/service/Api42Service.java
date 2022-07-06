@@ -34,22 +34,8 @@ public class Api42Service {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
             return accessToken;
-        } catch (HttpStatusCodeException eStatus) {
+        } catch (HttpStatusCodeException e1) {
             try {
-                int statusCode = eStatus.getStatusCode().value();
-
-                // Unauthorized
-                if (statusCode == 401) {
-                    throw new CustomException(ErrorMessage.TOKEN_EXPIRED);
-                }
-                else {
-                    throw new CustomException(ErrorMessage.TOKEN_INVALID);
-                }
-            }
-            catch (CustomException e) {
-                if (!e.getCode().equals("TOK_EXPIRED")) {
-                    throw new CustomException(ErrorMessage.TOKEN_INVALID);
-                }
                 final String url = "https://api.intra.42.fr/oauth/token";
 
                 // 세션 정보 불러오기
@@ -77,6 +63,8 @@ public class Api42Service {
                 MemberController.SetCookie("Authorization", "Bearer " + response.getBody().getAccess_token());
                 session.setAttribute("refreshToken", response.getBody().getRefresh_token());
                 return "Bearer " + response.getBody().getAccess_token();
+            } catch (HttpStatusCodeException e2) {
+                throw new CustomException(ErrorMessage.TOKEN_INVALID);
             }
         }
     }
